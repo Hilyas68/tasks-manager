@@ -1,6 +1,8 @@
 package com.accelerex.tasks_manager.serviceImpl;
 
 import com.accelerex.tasks_manager.dto.*;
+import com.accelerex.tasks_manager.exception.GenericAppException;
+import com.accelerex.tasks_manager.exception.UserAlreadyExistsException;
 import com.accelerex.tasks_manager.exception.UserNotFoundException;
 import com.accelerex.tasks_manager.model.auth.User;
 import com.accelerex.tasks_manager.model.auth.UserRole;
@@ -11,7 +13,11 @@ import com.accelerex.tasks_manager.service.EmailService;
 import com.accelerex.tasks_manager.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto adminSignUp(UserDto dto) {
+    public User adminSignUp(UserDto dto) {
         Optional<User> optionalUser = userRepository.findUserByEmail(dto.getEmail());
         if (optionalUser.isEmpty()) {
             User user = new User();
@@ -97,11 +103,10 @@ public class UserServiceImpl implements UserService {
             if (dto.getRoleId() != null && role.isPresent()) {
                 user.setRole(role.get());
             }
-            userRepository.save(user);
+            return userRepository.save(user);
         } else {
-            throw new RuntimeException("Email already exist");
+            throw new UserAlreadyExistsException("Email already exist");
         }
-        return null;
     }
 
     @Override
@@ -171,18 +176,31 @@ public class UserServiceImpl implements UserService {
     public User createStaff(StaffDto staffDto) {
         log.info("Creating new staff member with email: {}", staffDto.getEmail());
 
+        Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean isAdmin = false;
+        UserDetails userDetails = (UserDetails) user;
+        Optional<User> optionalUser1 = userRepository.findByEmail(userDetails.getUsername());
+        User user1 = optionalUser1.get();
+        Optional<UserRole> optionalUserRole = userRoleRepository.findById(user1.getRole().getId());
+        if (optionalUserRole.get().getName().equals("ADMIN")) {
+            isAdmin = true;
+        }
+        if (!isAdmin) {
+            throw new RuntimeException("User is not authorized");
+        }
+
         Optional<User> optionalUser = userRepository.findUserByEmail(staffDto.getEmail());
         if (optionalUser.isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new UserAlreadyExistsException("Email already exists");
         }
 
         User newUser = new User();
         newUser.setFirstName(staffDto.getFirstName());
         newUser.setLastName(staffDto.getLastName());
         newUser.setEmail(staffDto.getEmail());
-        Optional<UserRole> userRole = userRoleRepository.findById(2L);
+        Optional<UserRole> userRole = userRoleRepository.findById(1L);
         if (userRole.isEmpty()) {
-            throw new RuntimeException("User role does not exist");
+            throw new GenericAppException("User role does not exist");
         }
         newUser.setRole(userRole.get());
         String otp = generateOTP();
@@ -230,24 +248,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public String activateAccount(ActivationDto activationDto, String email) {
         if (!activationDto.getPassword().equals(activationDto.getConfirmPassword())) {
-            throw new RuntimeException("Passwords do not match");
+            throw new GenericAppException("Passwords do not match");
         }
         log.info("EMAIL {}", email);
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (!user.getOtp().equals(activationDto.getOtp())) {
-                throw new RuntimeException("Invalid OTP");
+                throw new GenericAppException("Invalid OTP");
             }
             user.setPassword(passwordEncoder.encode(activationDto.getPassword()));
             user.setDisabled(false); // Enable the user account
             user.setAccountVerified(true);
             user.setOtp(null);
+            user.setSecurityQuestion(activationDto.getSecurityQuestion());
+            user.setSecurityAnswer(activationDto.getSecurityAnswer());
             userRepository.save(user);
 
             return "Account activated successfully!";
         } else {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
     }
 }

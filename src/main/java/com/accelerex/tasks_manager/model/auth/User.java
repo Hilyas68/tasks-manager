@@ -2,6 +2,7 @@ package com.accelerex.tasks_manager.model.auth;
 
 
 import com.accelerex.tasks_manager.model.auth.enums.SecurityQuestion;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class User {
     private String lastName;
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+    @JsonIgnore
     private String password;
     private String otp;
     private boolean isDisabled;

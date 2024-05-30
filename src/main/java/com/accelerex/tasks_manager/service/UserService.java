@@ -12,7 +12,7 @@ public interface UserService {
     UserDto getUserById(Long userId);
 
     UserDto signUpUser(UserSignUpDto signUpDto);
-    UserDto adminSignUp(UserDto dto);
+    User adminSignUp(UserDto dto);
 
     PrincipalDTO loginUser(UserLoginDto dto);
 

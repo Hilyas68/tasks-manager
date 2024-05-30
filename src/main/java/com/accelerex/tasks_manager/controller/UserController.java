@@ -1,6 +1,7 @@
 package com.accelerex.tasks_manager.controller;
 
 import com.accelerex.tasks_manager.dto.*;
+import com.accelerex.tasks_manager.model.auth.User;
 import com.accelerex.tasks_manager.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
     @PostMapping("/admin/signup")
-    public ResponseEntity<UserDto> adminSignUp(@RequestBody UserDto dto) {
-        UserDto createdUser = userService.adminSignUp(dto);
+    public ResponseEntity<?> adminSignUp(@RequestBody UserDto dto) {
+        User createdUser = userService.adminSignUp(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
