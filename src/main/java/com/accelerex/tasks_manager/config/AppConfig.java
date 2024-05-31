@@ -8,10 +8,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 public class AppConfig {
 
-//    @Bean
-//    public PasswordEncoder getPasswordEncoder(){
-//        return new BCryptPasswordEncoder();
-//    }
     @Bean
     public JavaMailSender getJavaMailSender(){
         return new JavaMailSenderImpl();

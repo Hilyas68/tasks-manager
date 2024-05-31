@@ -1,10 +1,9 @@
 package com.accelerex.tasks_manager.model.auth;
 
 
+import com.accelerex.tasks_manager.model.auth.enums.Role;
 import com.accelerex.tasks_manager.model.auth.enums.SecurityQuestion;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,17 +39,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private SecurityQuestion securityQuestion;
     private String securityAnswer;
-    @ManyToOne(targetEntity = UserRole.class, fetch = FetchType.EAGER)
-    private UserRole role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @Transient
     private String fullName;
-    @JsonDeserialize
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
 
-    @JsonSerialize
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
 }
