@@ -27,8 +27,9 @@ public class CustomUserDetails implements UserDetails {
             SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(userAuthority);
             grantedAuthorities.add(simpleGrantedAuthority);
         }
-        this.authorities= grantedAuthorities;
+        this.authorities = grantedAuthorities;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

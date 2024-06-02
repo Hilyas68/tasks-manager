@@ -32,11 +32,11 @@ public class JWTUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Date extractExpiration(String token){
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimResolver){
+    public <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
@@ -45,11 +45,11 @@ public class JWTUtil {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
-    private Boolean isTokenExpired(String token){
+    private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username){
+    public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
     }
@@ -63,34 +63,33 @@ public class JWTUtil {
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails){
+    public Boolean validateToken(String token, UserDetails userDetails) {
         // todo: check if token is blacklisted -> if no, process else return false
         validateTokenIsNotForALoggedOutDevice(token);
         final String username = extractUserName(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public Boolean validateToken(String token){
+    public Boolean validateToken(String token) {
         // todo: check if token is blacklisted -> if no, process else return false
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             validateTokenIsNotForALoggedOutDevice(token);
             return true;
-        }catch (MalformedJwtException | UnsupportedJwtException e){
+        } catch (MalformedJwtException | UnsupportedJwtException e) {
             log.error("Invalid jwt token -> message: {}", e.getMessage());
-        }catch (ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             log.error("Expired jwt token -> message: {}", e.getMessage());
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             log.error("Jwt claims string is empty -> message: {}", e.getMessage());
         }
         return false;
     }
 
 
-
     private void validateTokenIsNotForALoggedOutDevice(String token) {
         OnUserLogoutSuccessEvent previouslyLoggedOutEvent = tokenBlackListCache.getLogoutEventForToken(token);
-        if (previouslyLoggedOutEvent != null){
+        if (previouslyLoggedOutEvent != null) {
             String userEmail = previouslyLoggedOutEvent.getUserEmail();
             Date logoutEventDate = previouslyLoggedOutEvent.getEventTime();
             String errorMessage = String.format("Token corresponds to an already logged out user [%s] on [%s]. Please login again", userEmail, logoutEventDate);

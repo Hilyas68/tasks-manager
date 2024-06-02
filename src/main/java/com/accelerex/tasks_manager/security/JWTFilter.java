@@ -23,10 +23,11 @@ public class JWTFilter extends OncePerRequestFilter {
     private final CustomUserDetailService service;
 
     @Autowired
-    public  JWTFilter(JWTUtil jwtUtil, CustomUserDetailService service) {
+    public JWTFilter(JWTUtil jwtUtil, CustomUserDetailService service) {
         this.jwtUtil = jwtUtil;
         this.service = service;
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 

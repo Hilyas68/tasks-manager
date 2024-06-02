@@ -15,17 +15,17 @@ public class ExceptionHandler {
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({InvalidTokenRequestException.class})
-    public ResponseEntity<?> handleException(InvalidTokenRequestException exception){
+    public ResponseEntity<?> handleException(InvalidTokenRequestException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({UserAlreadyExistsException.class})
-    public ResponseEntity<?> handleException(UserAlreadyExistsException exception){
+    public ResponseEntity<?> handleException(UserAlreadyExistsException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({GenericAppException.class})
-    public ResponseEntity<?> handleException(GenericAppException exception){
+    public ResponseEntity<?> handleException(GenericAppException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.mail.MessagingException;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/staff")
@@ -20,8 +18,8 @@ public class StaffController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<CreateStaffResponse> createStaff(@RequestBody StaffDto staffCreationDto) throws MessagingException {
+    public ResponseEntity<CreateStaffResponse> createStaff(@RequestBody StaffDto staffCreationDto) {
         var createdStaff = userService.createStaff(staffCreationDto);
-        return new ResponseEntity<>(createdStaff,HttpStatus.CREATED);
+        return new ResponseEntity<>(createdStaff, HttpStatus.CREATED);
     }
 }

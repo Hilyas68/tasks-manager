@@ -9,6 +9,7 @@ public enum SecurityQuestion {
 
     @Getter
     private String label;
+
     SecurityQuestion(String label) {
         this.label = label;
     }

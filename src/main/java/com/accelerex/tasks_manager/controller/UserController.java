@@ -1,7 +1,6 @@
 package com.accelerex.tasks_manager.controller;
 
 import com.accelerex.tasks_manager.dto.*;
-import com.accelerex.tasks_manager.model.auth.User;
 import com.accelerex.tasks_manager.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

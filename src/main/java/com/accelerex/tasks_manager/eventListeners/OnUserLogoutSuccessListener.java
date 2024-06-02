@@ -12,16 +12,16 @@ import java.util.Date;
 @Setter
 public class OnUserLogoutSuccessListener extends ApplicationEvent {
 
-        @Serial
-        private static final long serialVersionUID =1L;
-        private final String email;
-        private final String token;
-        private final Date eventTime;
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private final String email;
+    private final String token;
+    private final Date eventTime;
 
-        public OnUserLogoutSuccessListener(String email, String token){
-            super(email);
-            this.email = email;
-            this.token = token;
-            this.eventTime = Date.from(Instant.now());
-        }
+    public OnUserLogoutSuccessListener(String email, String token) {
+        super(email);
+        this.email = email;
+        this.token = token;
+        this.eventTime = Date.from(Instant.now());
+    }
 }

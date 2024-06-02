@@ -13,13 +13,13 @@ import java.util.Date;
 public class OnUserLogoutSuccessEvent extends ApplicationEvent {
 
     @Serial
-    private static final long serialVersionUID =1L;
+    private static final long serialVersionUID = 1L;
     private final String userEmail;
     private final String token;
     private final Date eventTime;
 
 
-    public OnUserLogoutSuccessEvent(String userEmail, String token){
+    public OnUserLogoutSuccessEvent(String userEmail, String token) {
         super(userEmail);
         this.userEmail = userEmail;
         this.token = token;

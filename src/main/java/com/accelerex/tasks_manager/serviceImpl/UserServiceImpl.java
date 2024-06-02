@@ -19,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -115,7 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CreateStaffResponse createStaff(StaffDto staffDto) throws MessagingException {
+    public CreateStaffResponse createStaff(StaffDto staffDto) {
         log.info("Creating new staff member with email: {}", staffDto.getEmail());
 
         Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -142,29 +141,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(newUser);
 
 
-        String activationLink = activation + staffDto.getEmail();
-
-        var subject = "Welcome to Our Service!";
-        var body = String.format(
-                """
-                        Dear %s %s,
-
-                        Welcome to our service! We are excited to have you on board. Please activate your account using the link below:
-
-                        %s
-
-                        OTP: %s
-
-                        Best regards,
-                        The Team""",
-                newUser.getFirstName(),
-                newUser.getLastName(),
-                activationLink,
-                otp
-        );
-
-        emailService.sendEmail(newUser.getEmail(), subject, body);
-
+        sendActivationEmail(staffDto,otp);
         log.info("New staff member created with ID: {}", newUser.getId());
         return new CreateStaffResponse(newUser.getEmail(), newUser.getPassword());
     }
@@ -196,6 +173,31 @@ public class UserServiceImpl implements UserService {
 
         return "Account activated successfully!";
 
+
+    }
+    private void sendActivationEmail(StaffDto newUser, String otp) {
+        String activationLink = activation + newUser.getEmail();
+
+        var subject = "Welcome to Our Service!";
+        var body = String.format(
+                """
+                        Dear %s %s,
+
+                        Welcome to our service! We are excited to have you on board. Please activate your account using the link below:
+
+                        %s
+
+                        OTP: %s
+
+                        Best regards,
+                        The Team""",
+                newUser.getFirstName(),
+                newUser.getLastName(),
+                activationLink,
+                otp
+        );
+
+        emailService.sendEmail(newUser.getEmail(), subject, body);
 
     }
 }

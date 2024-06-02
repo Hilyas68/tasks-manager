@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 public class ActivationDto {
+    public SecurityQuestion securityQuestion;
+    public String securityAnswer;
     private String password;
     private String confirmPassword;
     private String otp;
-    public SecurityQuestion securityQuestion;
-    public String securityAnswer;
 }
